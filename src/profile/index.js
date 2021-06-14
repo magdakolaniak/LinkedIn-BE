@@ -1,5 +1,5 @@
 import express from 'express';
-import ProfileModel from '../profile/schema.js';
+import ProfileModel from './schema.js';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
@@ -14,7 +14,7 @@ const cloudinaryStorage = new CloudinaryStorage({
 
 profileRouter.get('/', async (req, res, next) => {
   try {
-    const profile = await ProfileModel.find();
+    const profile = await ProfileModel.find().populate('experiences');
     res.send(profile);
   } catch (error) {
     console.log(error);
@@ -24,7 +24,9 @@ profileRouter.get('/', async (req, res, next) => {
 profileRouter.get('/:id', async (req, res, next) => {
   try {
     const profileId = req.params.id;
-    const profile = await ProfileModel.findById(profileId);
+    const profile = await ProfileModel.findById(profileId).populate(
+      'experiences'
+    );
   } catch (error) {
     console.log(error);
   }

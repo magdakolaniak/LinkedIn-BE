@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 const { Schema, model } = mongoose;
 
 const experienceSchema = new Schema(
@@ -9,10 +9,14 @@ const experienceSchema = new Schema(
     endDate: { type: Date },
     description: { type: String, required: true },
     area: { type: String, required: true },
-    username: { type: String, required: true },
-    image: { type: String, default: "https://res.cloudinary.com/dmqsfltrf/image/upload/v1607933865/linkedin/d5ncpqvqrjwdxixjuyjr.ico" },
+    username: { type: Schema.Types.ObjectId, required: true, ref: 'Profile' },
+    image: {
+      type: String,
+      default:
+        'https://res.cloudinary.com/dmqsfltrf/image/upload/v1607933865/linkedin/d5ncpqvqrjwdxixjuyjr.ico',
+    },
   },
   { timestamps: true }
 );
 
-export default model("experience", experienceSchema);
+export default model('Experience', experienceSchema);
