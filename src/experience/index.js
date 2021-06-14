@@ -83,9 +83,9 @@ ExperienceRouter.get('/csvDownload', async (req, res, next) => {
 ExperienceRouter.get('/:userName/experiences', async (req, res, next) => {
   try {
     const allExperiences = await experienceModel
-      .find()
+      .find({}, { updatedAt: 0, createdAt: 0 })
 
-      .populate(Profile, { path: 'user', select: 'name username' });
+      .populate('username', { name: 1, surname: 1, _id: 0 });
 
     res.send(allExperiences);
   } catch (error) {
