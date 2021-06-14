@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import express from 'express';
 import cors from 'cors';
 import experienceRoutes from './experience/index.js';
-
+import profileRoute from './profile/index.js';
 import postRouter from './post/index.js';
 
 const server = express();
@@ -18,6 +18,7 @@ server.use('/experience', experienceRoutes);
 //PROFILE ROUTE ARTUR
 //POST ROUTE   MAGDA
 server.use('/posts', postRouter);
+server.use('/profile', profileRoute);
 
 mongoose
   .connect(process.env.MONGO_CONNECTION, {
