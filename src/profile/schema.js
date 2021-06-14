@@ -11,6 +11,9 @@ const ProfileSchema = new Schema(
     title: { type: String, required: true },
     area: { type: String, required: true },
     avatar: { type: String, default: 'https://i.pravatar.cc/100' }, //have to check
+    experiences: [
+      { type: Schema.Types.ObjectId, required: true, ref: 'Experience' },
+    ],
   },
   { timestamps: true }
 );

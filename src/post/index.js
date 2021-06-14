@@ -5,7 +5,7 @@ const postRouter = express.Router();
 
 postRouter.get('/', async (req, res, next) => {
   try {
-    const posts = await postModel.find();
+    const posts = await postModel.find().populate('user');
     res.send(posts);
   } catch (error) {
     console.log(error);
@@ -49,7 +49,6 @@ postRouter.delete('/:id', async (req, res, next) => {
   try {
     const postId = req.params.id;
     const post = await postModel.findByIdAndDelete(postId);
-    
 
     if (post) {
       res.status(204).send('Sucesfully deleted!');
