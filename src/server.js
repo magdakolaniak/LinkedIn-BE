@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import experienceRoutes from './experience/index.js';
 
+
 import postRouter from './post/index.js';
 
 const server = express();
@@ -13,7 +14,7 @@ server.use(express.json());
 server.use(cors());
 
 //EXPERIENCE ROUTE BUSOLA
-server.use('/experience', experienceRoutes);
+server.use('/profile', experienceRoutes);
 
 //PROFILE ROUTE ARTUR
 //POST ROUTE   MAGDA
