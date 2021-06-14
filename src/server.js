@@ -3,6 +3,8 @@ import express from "express";
 import cors from "cors";
 import experienceRoutes from "./experience/index.js";
 
+import postRouter from './post';
+
 const server = express();
 
 const port = process.env.PORT;
@@ -15,6 +17,7 @@ server.use("/experience", experienceRoutes);
 
 //PROFILE ROUTE ARTUR
 //POST ROUTE   MAGDA
+server.use('/posts', postRouter);
 
 mongoose
   .connect(process.env.MONGO_CONNECTION, { useUnifiedTopology: true, useNewUrlParser: true })
