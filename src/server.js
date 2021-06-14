@@ -4,6 +4,7 @@ import cors from 'cors';
 import experienceRoutes from './experience/index.js';
 
 import postRouter from './post/index.js';
+import profileRouter from './profile/index.js';
 
 const server = express();
 
@@ -14,6 +15,7 @@ server.use(cors());
 
 //EXPERIENCE ROUTE BUSOLA
 server.use('/experience', experienceRoutes);
+server.use('/profile', profileRouter);
 
 //PROFILE ROUTE ARTUR
 //POST ROUTE   MAGDA
