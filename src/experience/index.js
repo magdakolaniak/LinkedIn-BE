@@ -1,5 +1,5 @@
-import express from "express"; // third party module(needs to ne installed)
-import experienceModel from "./schema.js";
+import express from 'express'; // third party module(needs to ne installed)
+import experienceModel from './schema.js';
 // import { validationResult } from "express-validator";
 // import createError from "http-errors";
 // import { blogPostsValidation } from "./validation.js";
@@ -14,7 +14,7 @@ const ExperienceRouter = express.Router();
 
 /****************POST Experience******************/
 
-ExperienceRouter.post("/", async (req, res, next) => {
+ExperienceRouter.post('/', async (req, res, next) => {
   try {
     const newExperience = new experienceModel(req.body);
 
@@ -26,19 +26,22 @@ ExperienceRouter.post("/", async (req, res, next) => {
 });
 
 /****************GET EXPERIENCES******************/
-ExperienceRouter.get("/profile/userName/experiences", async (req, res, next) => {
-  try {
-    const allExperiences = await experienceModel.find();
+ExperienceRouter.get(
+  '/profile/userName/experiences',
+  async (req, res, next) => {
+    try {
+      const allExperiences = await experienceModel.find();
 
-    res.send(allExperiences);
-  } catch (error) {
-    console.log(error);
-    next(error);
+      res.send(allExperiences);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
   }
-});
+);
 
 /****************GET EXPERIENCES******************/
-ExperienceRouter.get("/:id", async (req, res, next) => {
+ExperienceRouter.get('/:id', async (req, res, next) => {
   try {
   } catch (error) {
     console.log(error);
@@ -47,7 +50,7 @@ ExperienceRouter.get("/:id", async (req, res, next) => {
 });
 
 /****************UPDATE EXPERIENCES******************/
-ExperienceRouter.put("/:id", async (req, res, next) => {
+ExperienceRouter.put('/:id', async (req, res, next) => {
   try {
     // const singlePost = await experienceModel.findByIdAndUpdate(req.params.id, req.body, { runValidators: true, new: true });
     // res.send(singlePost);
@@ -57,7 +60,7 @@ ExperienceRouter.put("/:id", async (req, res, next) => {
 });
 
 /****************DELETE EXPERIENCE******************/
-ExperienceRouter.delete("/:id", async (req, res, next) => {
+ExperienceRouter.delete('/:id', async (req, res, next) => {
   try {
     // const singlePost = await experienceModel.findByIdAndDelete(req.params.id);
     // if (singlePost) {
@@ -69,14 +72,14 @@ ExperienceRouter.delete("/:id", async (req, res, next) => {
 });
 
 /****************Download PDF******************/
-ExperienceRouter.get("/pdfDownload", async (req, res, next) => {
+ExperienceRouter.get('/pdfDownload', async (req, res, next) => {
   try {
   } catch (error) {
     next(error);
   }
 });
 /******************************Export CSV******************************************/
-ExperienceRouter.get("/pdftocsv", async (req, res, next) => {
+ExperienceRouter.get('/pdftocsv', async (req, res, next) => {
   try {
     // await generatePDF();
     // res.send("generated");
@@ -86,7 +89,7 @@ ExperienceRouter.get("/pdftocsv", async (req, res, next) => {
 });
 
 /***************************Download csv**********************************************/
-ExperienceRouter.get("/csvDownload", async (req, res, next) => {
+ExperienceRouter.get('/csvDownload', async (req, res, next) => {
   try {
   } catch (error) {
     next(error);
@@ -103,7 +106,7 @@ ExperienceRouter.get("/csvDownload", async (req, res, next) => {
 
 // const upload = multer({ storage: cloudinaryStorage }).single("cover");
 
-ExperienceRouter.post("/:id/uploadCover", upload, async (req, res, next) => {
+ExperienceRouter.post('/:id/uploadCover', async (req, res, next) => {
   try {
   } catch (error) {
     next(error);
