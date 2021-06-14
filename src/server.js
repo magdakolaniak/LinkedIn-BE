@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import express from 'express';
 import cors from 'cors';
 
+import postRouter from './post';
+
 const server = express();
 
 const port = process.env.PORT;
@@ -12,6 +14,7 @@ server.use(cors());
 //EXPERIENCE ROUTE BUSOLA
 //PROFILE ROUTE ARTUR
 //POST ROUTE   MAGDA
+server.use('/posts', postRouter);
 
 mongoose
   .connect(process.env.MONGO_CONNECTION, {
