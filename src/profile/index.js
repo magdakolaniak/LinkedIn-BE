@@ -1,7 +1,16 @@
 import express from 'express';
 import ProfileModel from '../profile/schema.js';
+import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
 const profileRouter = express.Router();
+const cloudinaryStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'linkedin',
+  },
+});
 
 profileRouter.get('/', async (req, res, next) => {
   try {
@@ -30,6 +39,24 @@ profileRouter.post('/', async (req, res, next) => {
     console.log(error);
   }
 });
+
+profileRouter.post(
+  '/:id/picture',
+  multer({ storage: cloudinaryStorage }).single('picture'),
+  async (req, res, next) => {
+    try {
+      const profileId = req.params.id;
+      const avatarUrl = `${req.file.path}`;
+      const profileToUpdate = await ProfileModel.findById(profileId);
+      profileToUpdate.avatar = avatarUrl;
+      const newProfile = await profileToUpdate.save();
+
+      res.send(newProfile);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
 
 profileRouter.put('/:id', async (req, res, next) => {
   try {
