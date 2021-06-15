@@ -1,9 +1,11 @@
-import express from "express"; // third party module(needs to ne installed)
-import experienceModel from "./schema.js";
-import multer from "multer";
-import { v2 as cloudinary } from "cloudinary";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
-import { Transform } from "json2csv";
+
+import express from 'express'; // third party module(needs to ne installed)
+import experienceModel from './schema.js';
+import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import { generateCV } from '../lib/pdf.js';
+
 
 // import { validationResult } from "express-validator";
 // import createError from "http-errors";
@@ -37,6 +39,7 @@ const cloudinaryStorage = new CloudinaryStorage({
 const upload = multer({ storage: cloudinaryStorage }).single("image");
 
 ExperienceRouter.post("/:userName/experiences/:expId/picture", upload, async (req, res, next) => {
+
   try {
     console.log(req.file);
     console.log(req.file.path);
@@ -49,6 +52,34 @@ ExperienceRouter.post("/:userName/experiences/:expId/picture", upload, async (re
     next(error);
   }
 });
+
+
+
+
+/****************Download PDF******************/
+ExperienceRouter.get('/:id/pdfDownload', async (req, res, next) => {
+  try {
+    const user = await experienceModel
+      .findById(req.params.id)
+      .populate('username', {
+        avatar: 1,
+        name: 1,
+        surname: 1,
+        _id: 0,
+        email: 1,
+        bio: 1,
+        title: 1,
+      });
+
+    const pdfStream = await generateCV(user);
+    res.setHeader('Content-Type', 'application/pdf');
+    pdfStream.pipe(res);
+    pdfStream.end();
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 /***************************Download csv**********************************************/
 ExperienceRouter.get("/:userName/experiences/CSV", async (req, res, next) => {
@@ -80,7 +111,20 @@ ExperienceRouter.get("/:userName/experiences/CSV", async (req, res, next) => {
 /****************GET EXPERIENCES******************/
 ExperienceRouter.get("/:userName/experiences", async (req, res, next) => {
   try {
-    const allExperiences = await experienceModel.find({}, { updatedAt: 0, createdAt: 0 }).populate("username", { name: 1, surname: 1, _id: 0 });
+
+    const allExperiences = await experienceModel
+      .find({}, { updatedAt: 0, createdAt: 0 })
+
+      .populate('username', {
+        avatar: 1,
+        name: 1,
+        surname: 1,
+        _id: 0,
+        email: 1,
+        bio: 1,
+        title: 1,
+      });
+
 
     res.send(allExperiences);
   } catch (error) {
