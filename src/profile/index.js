@@ -1,5 +1,6 @@
 import express from 'express';
 import ProfileModel from './schema.js';
+import ExperienceModel from '../experience/schema.js';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
@@ -14,7 +15,7 @@ const cloudinaryStorage = new CloudinaryStorage({
 
 profileRouter.get('/', async (req, res, next) => {
   try {
-    const profile = await ProfileModel.find().populate('experiences');
+    const profile = await ProfileModel.find();
     res.send(profile);
   } catch (error) {
     console.log(error);
@@ -27,6 +28,7 @@ profileRouter.get('/:id', async (req, res, next) => {
     const profile = await ProfileModel.findById(profileId).populate(
       'experiences'
     );
+    res.send(profile);
   } catch (error) {
     console.log(error);
   }
@@ -37,6 +39,19 @@ profileRouter.post('/', async (req, res, next) => {
     const newProfile = new ProfileModel(req.body);
     const data = await newProfile.save();
     res.send(data);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+profileRouter.post('/:id/newExperience', async (req, res, next) => {
+  try {
+    const newExp = new ExperienceModel(req.body);
+    const { _id } = await newExp.save();
+    const profile = await ProfileModel.findById(req.params.id);
+    profile.experiences.push(_id);
+    const updatedProfile = await profile.save();
+    res.send(updatedProfile);
   } catch (error) {
     console.log(error);
   }
