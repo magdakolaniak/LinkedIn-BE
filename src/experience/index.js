@@ -69,7 +69,7 @@ ExperienceRouter.get('/:id/pdfDownload', async (req, res, next) => {
         bio: 1,
         title: 1,
       });
-    console.log(user);
+
     const pdfStream = await generateCV(user);
     res.setHeader('Content-Type', 'application/pdf');
     pdfStream.pipe(res);
@@ -102,7 +102,15 @@ ExperienceRouter.get('/:userName/experiences', async (req, res, next) => {
     const allExperiences = await experienceModel
       .find({}, { updatedAt: 0, createdAt: 0 })
 
-      .populate('username', { avatar: 1, name: 1, surname: 1, _id: 0 });
+      .populate('username', {
+        avatar: 1,
+        name: 1,
+        surname: 1,
+        _id: 0,
+        email: 1,
+        bio: 1,
+        title: 1,
+      });
 
     res.send(allExperiences);
   } catch (error) {

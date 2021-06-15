@@ -17,7 +17,6 @@ const printer = new PdfPrinter(fonts);
 export const generateCV = async (user) => {
   let imagePart = {};
   if (user.username.avatar) {
-    console.log(user.username.avatar);
     const response = await axios.get(user.username.avatar, {
       responseType: 'arraybuffer',
     });
@@ -45,16 +44,14 @@ export const generateCV = async (user) => {
               {
                 stack: [
                   'Personal details',
-                  {
-                    style: 'branNew',
-                    ul: [
-                      `name: ${user.username.name}                   `,
-                      `surname: ${user.username.surname}             `,
-                      `title: ${user.username.title}`,
-                      `e-mail: ${user.username.email}`,
-                      `bio: ${user.username.title}`,
-                    ],
-                  },
+
+                  `NAME: ${user.username.name}`,
+                  `SURNAME: ${user.username.surname}             `,
+                  `TITLE ${user.username.title}`,
+                  `E-MAIL: ${user.username.email}`,
+                  `BIO: ${user.username.title}`,
+                  ,
+                  ,
                 ],
               },
             ],
