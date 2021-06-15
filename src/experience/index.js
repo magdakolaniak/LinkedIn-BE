@@ -1,17 +1,18 @@
-
-import express from 'express'; // third party module(needs to ne installed)
-import experienceModel from './schema.js';
-import multer from 'multer';
-import { v2 as cloudinary } from 'cloudinary';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
-import { generateCV } from '../lib/pdf.js';
-
+import express from "express"; // third party module(needs to ne installed)
+import fs from "fs"; // core module (does not need to be installed)
+import experienceModel from "./schema.js";
+import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { generateCV } from "../lib/pdf.js";
+import { parse } from "json2csv";
+// import path, { dirname, join } from "path";
+import { pipeline } from "stream";
 
 // import { validationResult } from "express-validator";
 // import createError from "http-errors";
 // import { blogPostsValidation } from "./validation.js";
 // import { generatePDFStream } from "../lib/pdf.js";
-// import { pipeline } from "stream";
 
 const ExperienceRouter = express.Router();
 
@@ -39,7 +40,6 @@ const cloudinaryStorage = new CloudinaryStorage({
 const upload = multer({ storage: cloudinaryStorage }).single("image");
 
 ExperienceRouter.post("/:userName/experiences/:expId/picture", upload, async (req, res, next) => {
-
   try {
     console.log(req.file);
     console.log(req.file.path);
@@ -53,26 +53,21 @@ ExperienceRouter.post("/:userName/experiences/:expId/picture", upload, async (re
   }
 });
 
-
-
-
 /****************Download PDF******************/
-ExperienceRouter.get('/:id/pdfDownload', async (req, res, next) => {
+ExperienceRouter.get("/:id/pdfDownload", async (req, res, next) => {
   try {
-    const user = await experienceModel
-      .findById(req.params.id)
-      .populate('username', {
-        avatar: 1,
-        name: 1,
-        surname: 1,
-        _id: 0,
-        email: 1,
-        bio: 1,
-        title: 1,
-      });
+    const user = await experienceModel.findById(req.params.id).populate("username", {
+      avatar: 1,
+      name: 1,
+      surname: 1,
+      _id: 0,
+      email: 1,
+      bio: 1,
+      title: 1,
+    });
 
     const pdfStream = await generateCV(user);
-    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader("Content-Type", "application/pdf");
     pdfStream.pipe(res);
     pdfStream.end();
   } catch (error) {
@@ -80,30 +75,21 @@ ExperienceRouter.get('/:id/pdfDownload', async (req, res, next) => {
   }
 });
 
-
 /***************************Download csv**********************************************/
+
 ExperienceRouter.get("/:userName/experiences/CSV", async (req, res, next) => {
   try {
     const allExperiences = await experienceModel.find();
+    //  const getExperienceSource = () => createReadStream(allExperiences);
+
     const fields = ["_id", "role", "company", "startDate", "endDate", "description", "area"];
     const options = { fields };
-    const jsonToCsv = new Transform(options);
-    const csv = json2csv(allExperiences, { fields });
-
-    /* const source = getExperienceSource();
-    res.setHeader("Content-Disposition", "attachment; filename=export.csv");
-    pipeline(source, jsonToCsv, res, (err) => next(err)); // source (file on disk) -> transform (json 2 csv) -> destination (response)
-  */
-
-    const dateTime = moment().format("YYYYMMDDhhmmss");
-    const filePath = path.join(__dirname, "..", "public", "exports", "csv-" + dateTime + ".csv");
-    fs.writeFile(filePath, csv, function (err) {
-      setTimeout(function () {
-        fs.unlinkSync(filePath); // delete this file after 30 seconds
-      }, 30000);
-      return res.json("/exports/csv-" + dateTime + ".csv");
-    });
+    const csv = parse(allExperiences, options);
+    console.log(csv);
+    res.setHeader("Content-Disposition", `attachment; filename = export.csv`);
+    res.send(csv);
   } catch (error) {
+    console.log(error);
     next(error);
   }
 });
@@ -111,11 +97,10 @@ ExperienceRouter.get("/:userName/experiences/CSV", async (req, res, next) => {
 /****************GET EXPERIENCES******************/
 ExperienceRouter.get("/:userName/experiences", async (req, res, next) => {
   try {
-
     const allExperiences = await experienceModel
       .find({}, { updatedAt: 0, createdAt: 0 })
 
-      .populate('username', {
+      .populate("username", {
         avatar: 1,
         name: 1,
         surname: 1,
@@ -124,7 +109,6 @@ ExperienceRouter.get("/:userName/experiences", async (req, res, next) => {
         bio: 1,
         title: 1,
       });
-
 
     res.send(allExperiences);
   } catch (error) {
