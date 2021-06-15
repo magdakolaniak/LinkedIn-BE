@@ -1,13 +1,14 @@
-import express from "express"; // third party module(needs to ne installed)
-import fs from "fs"; // core module (does not need to be installed)
-import experienceModel from "./schema.js";
-import multer from "multer";
-import { v2 as cloudinary } from "cloudinary";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
-import { generateCV } from "../lib/pdf.js";
-import { parse } from "json2csv";
+import express from 'express'; // third party module(needs to ne installed)
+import fs from 'fs'; // core module (does not need to be installed)
+import experienceModel from './schema.js';
+import profileModel from '../profile/schema.js';
+import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import { generateCV } from '../lib/pdf.js';
+import { parse } from 'json2csv';
 // import path, { dirname, join } from "path";
-import { pipeline } from "stream";
+import { pipeline } from 'stream';
 
 // import { validationResult } from "express-validator";
 // import createError from "http-errors";
@@ -65,7 +66,7 @@ ExperienceRouter.get('/:userId/pdfDownload', async (req, res, next) => {
       .populate('experiences');
 
     const pdfStream = await generateCV(user);
-    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader('Content-Type', 'application/pdf');
     pdfStream.pipe(res);
     pdfStream.end();
   } catch (error) {
@@ -75,16 +76,24 @@ ExperienceRouter.get('/:userId/pdfDownload', async (req, res, next) => {
 
 /***************************Download csv**********************************************/
 
-ExperienceRouter.get("/:userName/experiences/CSV", async (req, res, next) => {
+ExperienceRouter.get('/:userName/experiences/CSV', async (req, res, next) => {
   try {
     const allExperiences = await experienceModel.find();
     //  const getExperienceSource = () => createReadStream(allExperiences);
 
-    const fields = ["_id", "role", "company", "startDate", "endDate", "description", "area"];
+    const fields = [
+      '_id',
+      'role',
+      'company',
+      'startDate',
+      'endDate',
+      'description',
+      'area',
+    ];
     const options = { fields };
     const csv = parse(allExperiences, options);
     console.log(csv);
-    res.setHeader("Content-Disposition", `attachment; filename = export.csv`);
+    res.setHeader('Content-Disposition', `attachment; filename = export.csv`);
     res.send(csv);
   } catch (error) {
     console.log(error);
@@ -98,7 +107,7 @@ ExperienceRouter.get('/:userName/experiences', async (req, res, next) => {
     const allExperiences = await experienceModel
       .find({}, { updatedAt: 0, createdAt: 0 })
 
-      .populate("username", {
+      .populate('username', {
         avatar: 1,
         name: 1,
         surname: 1,
