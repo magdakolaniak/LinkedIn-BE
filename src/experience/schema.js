@@ -9,7 +9,7 @@ const experienceSchema = new Schema(
     endDate: { type: Date },
     description: { type: String, required: true },
     area: { type: String, required: true },
-    username: { type: Schema.Types.ObjectId, required: true, ref: 'Profile' }, 
+    username: { type: Schema.Types.ObjectId,  ref: 'Profile' }, 
     image: {
       type: String,
       default:
