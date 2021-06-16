@@ -1,11 +1,21 @@
-import express from "express";
-import postModel from "./schema.js";
+import express from 'express';
+import postModel from './schema.js';
+import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
 const postRouter = express.Router();
 
-postRouter.get("/", async (req, res, next) => {
+const cloudinaryStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'linkedin',
+  },
+});
+
+postRouter.get('/', async (req, res, next) => {
   try {
-    const posts = await postModel.find().populate("user");
+    const posts = await postModel.find().populate('user');
     res.send(posts);
   } catch (error) {
     console.log(error);
@@ -13,7 +23,7 @@ postRouter.get("/", async (req, res, next) => {
 });
 //new changes
 
-postRouter.get("/:id", async (req, res, next) => {
+postRouter.get('/:id', async (req, res, next) => {
   try {
     const postId = req.params.id;
     const post = await postModel.findById(postId);
@@ -23,7 +33,7 @@ postRouter.get("/:id", async (req, res, next) => {
   }
 });
 
-postRouter.post("/", async (req, res, next) => {
+postRouter.post('/', async (req, res, next) => {
   try {
     const newPost = new postModel(req.body);
     const data = await newPost.save();
@@ -32,8 +42,25 @@ postRouter.post("/", async (req, res, next) => {
     console.log(error);
   }
 });
+postRouter.post(
+  '/:id/upload',
+  multer({ storage: cloudinaryStorage }).single('cover'),
+  async (req, res, next) => {
+    try {
+      const postId = req.params.id;
+      const postCover = `${req.file.path}`;
+      const postToUpdate = await postModel.findById(postId);
+      postToUpdate.image = postCover;
+      const newPost = await postToUpdate.save();
 
-postRouter.put("/:id", async (req, res, next) => {
+      res.send(newPost);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+postRouter.put('/:id', async (req, res, next) => {
   try {
     const postId = req.params.id;
     const post = await postModel.findByIdAndUpdate(postId, req.body, {
@@ -46,15 +73,15 @@ postRouter.put("/:id", async (req, res, next) => {
   }
 });
 
-postRouter.delete("/:id", async (req, res, next) => {
+postRouter.delete('/:id', async (req, res, next) => {
   try {
     const postId = req.params.id;
     const post = await postModel.findByIdAndDelete(postId);
 
     if (post) {
-      res.status(204).send("Sucesfully deleted!");
+      res.status(204).send('Sucesfully deleted!');
     } else {
-      res.send("Post with given ID not found");
+      res.send('Post with given ID not found');
     }
   } catch (error) {
     console.log(error);
