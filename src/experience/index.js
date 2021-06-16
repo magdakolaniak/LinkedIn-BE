@@ -97,7 +97,7 @@ ExperienceRouter.get('/:userName/experiences/CSV', async (req, res, next) => {
     ];
     const options = { fields };
     const csv = parse(onlyExp, options);
-    console.log('CSV HERE:', csv);
+
     res.setHeader(
       'Content-Disposition',
       `attachment; filename = ${name}_${surname}.csv`
@@ -110,27 +110,27 @@ ExperienceRouter.get('/:userName/experiences/CSV', async (req, res, next) => {
 });
 
 /****************GET EXPERIENCES******************/
-// ExperienceRouter.get('/:userName/experiences', async (req, res, next) => {
-//   try {
-//     const allExperiences = await experienceModel
-//       .find({}, { updatedAt: 0, createdAt: 0 })
+ExperienceRouter.get('/:userName/experiences', async (req, res, next) => {
+  try {
+    const allExperiences = await experienceModel
+      .find({}, { updatedAt: 0, createdAt: 0 })
 
-//       .populate('username', {
-//         avatar: 1,
-//         name: 1,
-//         surname: 1,
-//         _id: 0,
-//         email: 1,
-//         bio: 1,
-//         title: 1,
-//       });
+      .populate('username', {
+        avatar: 1,
+        name: 1,
+        surname: 1,
+        _id: 0,
+        email: 1,
+        bio: 1,
+        title: 1,
+      });
 
-//     res.send(allExperiences);
-//   } catch (error) {
-//     console.log(error);
-//     next(error);
-//   }
-// });
+    res.send(allExperiences);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
 
 /****************GET SPECIFIC EXPERIENCES******************/
 ExperienceRouter.get(
