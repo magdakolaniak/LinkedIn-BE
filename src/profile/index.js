@@ -25,7 +25,18 @@ profileRouter.get('/', async (req, res, next) => {
 profileRouter.get('/:id', async (req, res, next) => {
   try {
     const profileId = req.params.id;
-    const profile = await ProfileModel.findById(profileId ).populate(
+    const profile = await ProfileModel.findById(profileId).populate(
+      'experiences'
+    );
+    res.send(profile);
+  } catch (error) {
+    console.log(error);
+  }
+});
+profileRouter.get('/:id/experiences', async (req, res, next) => {
+  try {
+    const profileId = req.params.id;
+    const profile = await ProfileModel.findById(profileId).populate(
       'experiences'
     );
     res.send(profile);
