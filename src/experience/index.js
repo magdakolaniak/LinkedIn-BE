@@ -17,17 +17,17 @@ const ExperienceRouter = express.Router();
 
 /****************POST Experience******************/
 
-ExperienceRouter.post('/:userName/experiences', async (req, res, next) => {
-  try {
-    // const user = await userModel.findById()
+// ExperienceRouter.post('/:userName/experiences', async (req, res, next) => {
+//   try {
+//     // const user = await userModel.findById()
 
-    const newExperience = new experienceModel(req.body);
-    const mongoRes = await newExperience.save();
-    res.status(201).send(mongoRes);
-  } catch (error) {
-    next(error);
-  }
-});
+//     const newExperience = new experienceModel(req.body);
+//     const mongoRes = await newExperience.save();
+//     res.status(201).send(mongoRes);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 /****************UPLOAD COVER USING CLOUDINARY******************/
 const cloudinaryStorage = new CloudinaryStorage({
   cloudinary,
@@ -130,7 +130,7 @@ ExperienceRouter.get(
       if (singleExp) {
         res.send(singleExp);
       } else {
-        res.status(404).send_(`Not found `);
+        res.status(404).send(`Not found `);
       }
     } catch (error) {
       console.log(error);

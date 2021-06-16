@@ -44,7 +44,7 @@ profileRouter.post('/', async (req, res, next) => {
   }
 });
 
-profileRouter.post('/:id/newExperience', async (req, res, next) => {
+profileRouter.post('/:id/experiences', async (req, res, next) => {
   try {
     const newExp = new ExperienceModel(req.body);
     const { _id } = await newExp.save();
