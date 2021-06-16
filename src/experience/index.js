@@ -61,9 +61,12 @@ ExperienceRouter.get('/:userId/pdfDownload', async (req, res, next) => {
 
       .findById(req.params.userId)
       .populate('experiences');
-    console.log(user);
+    const { name, surname } = user;
     const pdfStream = await generateCV(user);
-    res.setHeader('Content-Type', 'application/pdf');
+    res.set({
+      'content-type': 'application/pdf',
+      'content-disposition': `attachment; filename = ${name}_${surname}.pdf`,
+    });
     pdfStream.pipe(res);
     pdfStream.end();
   } catch (error) {
@@ -75,7 +78,12 @@ ExperienceRouter.get('/:userId/pdfDownload', async (req, res, next) => {
 
 ExperienceRouter.get('/:userName/experiences/CSV', async (req, res, next) => {
   try {
-    const allExperiences = await experienceModel.find();
+    const userData = await profileModel
+      .findById(req.params.userName)
+      .populate('experiences');
+    const onlyExp = userData.experiences;
+    const { name, surname } = userData;
+
     //  const getExperienceSource = () => createReadStream(allExperiences);
 
     const fields = [
@@ -88,9 +96,12 @@ ExperienceRouter.get('/:userName/experiences/CSV', async (req, res, next) => {
       'area',
     ];
     const options = { fields };
-    const csv = parse(allExperiences, options);
-    console.log(csv);
-    res.setHeader('Content-Disposition', `attachment; filename = export.csv`);
+    const csv = parse(onlyExp, options);
+    console.log('CSV HERE:', csv);
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename = ${name}_${surname}.csv`
+    );
     res.send(csv);
   } catch (error) {
     console.log(error);
@@ -99,27 +110,27 @@ ExperienceRouter.get('/:userName/experiences/CSV', async (req, res, next) => {
 });
 
 /****************GET EXPERIENCES******************/
-ExperienceRouter.get('/:userName/experiences', async (req, res, next) => {
-  try {
-    const allExperiences = await experienceModel
-      .find({}, { updatedAt: 0, createdAt: 0 })
+// ExperienceRouter.get('/:userName/experiences', async (req, res, next) => {
+//   try {
+//     const allExperiences = await experienceModel
+//       .find({}, { updatedAt: 0, createdAt: 0 })
 
-      .populate('username', {
-        avatar: 1,
-        name: 1,
-        surname: 1,
-        _id: 0,
-        email: 1,
-        bio: 1,
-        title: 1,
-      });
+//       .populate('username', {
+//         avatar: 1,
+//         name: 1,
+//         surname: 1,
+//         _id: 0,
+//         email: 1,
+//         bio: 1,
+//         title: 1,
+//       });
 
-    res.send(allExperiences);
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-});
+//     res.send(allExperiences);
+//   } catch (error) {
+//     console.log(error);
+//     next(error);
+//   }
+// });
 
 /****************GET SPECIFIC EXPERIENCES******************/
 ExperienceRouter.get(
