@@ -1,5 +1,4 @@
-import express from 'express'; // third party module(needs to ne installed)
-import fs from 'fs'; // core module (does not need to be installed)
+import express from 'express'; // third party module(needs to ne installed) // core module (does not need to be installed)
 import experienceModel from './schema.js';
 import profileModel from '../profile/schema.js';
 import multer from 'multer';
@@ -8,7 +7,6 @@ import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { generateCV } from '../lib/pdf.js';
 import { parse } from 'json2csv';
 // import path, { dirname, join } from "path";
-import { pipeline } from 'stream';
 
 // import { validationResult } from "express-validator";
 // import createError from "http-errors";
@@ -45,8 +43,6 @@ ExperienceRouter.post(
   upload,
   async (req, res, next) => {
     try {
-      console.log(req.file);
-      console.log(req.file.path);
       const experience = await experienceModel.findById(req.params.expId);
       experience.image = req.file.path;
       await experience.save();
@@ -62,9 +58,10 @@ ExperienceRouter.post(
 ExperienceRouter.get('/:userId/pdfDownload', async (req, res, next) => {
   try {
     const user = await profileModel
+
       .findById(req.params.userId)
       .populate('experiences');
-
+    console.log(user);
     const pdfStream = await generateCV(user);
     res.setHeader('Content-Type', 'application/pdf');
     pdfStream.pipe(res);

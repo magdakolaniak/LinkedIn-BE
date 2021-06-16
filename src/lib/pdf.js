@@ -14,16 +14,16 @@ const fonts = {
 const printer = new PdfPrinter(fonts);
 
 export const generateCV = async (user) => {
-  console.log(user);
   let imagePart = {};
   let start = user.experiences[0].startDate;
   let day = start.getDay();
   let month = start.getMonth();
   let year = start.getFullYear();
+
   // let cut = start.split('');
-  console.log(day, month, year);
+  // console.log(day, month, year);
   if (user.avatar) {
-    const response = await axios.get(user.username.avatar, {
+    const response = await axios.get(user.avatar, {
       responseType: 'arraybuffer',
     });
     const userAvatarURLParts = user.avatar.split('/');
@@ -97,7 +97,7 @@ export const generateCV = async (user) => {
           ],
         },
         layout: 'noBorders',
-        margin: [60, 0, 0, 0],
+        margin: [40, 0, 0, 0],
       },
       { text: 'WORKING EXPERIENCE:', style: 'headline' },
 
