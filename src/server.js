@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import experienceRoutes from './experience/index.js';
 import listEndpoints from 'express-list-endpoints';
-
+import commentsRouter from './comments/index.js';
 import profileRoute from './profile/index.js';
 import postRouter from './post/index.js';
 import {
@@ -26,6 +26,7 @@ server.use('/profile', experienceRoutes);
 //PROFILE ROUTE ARTUR
 //POST ROUTE   MAGDA
 server.use('/posts', postRouter);
+server.use('/posts', commentsRouter);
 server.use('/profile', profileRoute);
 
 server.use(notFoundErrorHandler);
