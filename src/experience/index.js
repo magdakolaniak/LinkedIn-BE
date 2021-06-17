@@ -1,4 +1,4 @@
-import express from 'express'; 
+import express from 'express';
 import experienceModel from './schema.js';
 import profileModel from '../profile/schema.js';
 import multer from 'multer';
@@ -7,9 +7,7 @@ import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { generateCV } from '../lib/pdf.js';
 import { parse } from 'json2csv';
 
-
 const ExperienceRouter = express.Router();
-
 
 /****************UPLOAD COVER USING CLOUDINARY******************/
 const cloudinaryStorage = new CloudinaryStorage({
@@ -61,7 +59,6 @@ ExperienceRouter.get('/:userId/pdfDownload', async (req, res, next) => {
 
 ExperienceRouter.get('/:userName/experiences/CSV', async (req, res, next) => {
   try {
-
     const userData = await profileModel
       .findById(req.params.userName)
       .populate('experiences');
@@ -84,26 +81,24 @@ ExperienceRouter.get('/:userName/experiences/CSV', async (req, res, next) => {
       `attachment; filename = ${name}_${surname}.csv`
     );
     res.send(csv);
-
   } catch (error) {
     console.log(error);
     next(error);
   }
 });
 
-
-
-    
-
-
 /****************UPDATE EXPERIENCES******************/
-ExperienceRouter.put("/experiences/:expId", async (req, res, next) => {
+ExperienceRouter.put('/experiences/:expId', async (req, res, next) => {
   try {
-    const updatedExp = await experienceModel.findByIdAndUpdate(req.params.expId, req.body, { runValidators: true, new: true });
+    const updatedExp = await experienceModel.findByIdAndUpdate(
+      req.params.expId,
+      req.body,
+      { runValidators: true, new: true }
+    );
     if (updatedExp) {
       res.send(updatedExp);
     } else {
-      res.status(404).send("Not found");
+      res.status(404).send('Not found');
     }
   } catch (error) {
     console.log(error);
@@ -112,12 +107,12 @@ ExperienceRouter.put("/experiences/:expId", async (req, res, next) => {
 });
 
 /****************GET EXPERIENCES ******************/
-ExperienceRouter.get("/experiences", async (req, res, next) => {
+ExperienceRouter.get('/experiences', async (req, res, next) => {
   try {
     const allExperiences = await experienceModel
       .find({}, { updatedAt: 0, createdAt: 0 })
 
-      .populate("username", {
+      .populate('username', {
         avatar: 1,
         name: 1,
         surname: 1,
@@ -133,8 +128,6 @@ ExperienceRouter.get("/experiences", async (req, res, next) => {
     next(error);
   }
 });
-
-
 
 /****************GET SPECIFIC EXPERIENCES******************/
 ExperienceRouter.get(
@@ -154,25 +147,22 @@ ExperienceRouter.get(
   }
 );
 
-
-
-
 /****************DELETE EXPERIENCE******************/
 
-ExperienceRouter.delete("/experiences/:expId", async (req, res, next) => {
+ExperienceRouter.delete('/experiences/:expId', async (req, res, next) => {
   try {
-    const deletedExp = await experienceModel.findByIdAndDelete(req.params.expId);
+    const deletedExp = await experienceModel.findByIdAndDelete(
+      req.params.expId
+    );
     if (deletedExp) {
-      res.status(204).send("deleted");
+      res.status(204).send('deleted');
     } else {
-      res.status(404).send("Not found");
+      res.status(404).send('Not found');
     }
   } catch (error) {
     console.log(error);
     next(error);
-
-
   }
-);
+});
 
 export default ExperienceRouter;
