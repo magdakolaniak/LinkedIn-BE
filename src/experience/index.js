@@ -69,7 +69,6 @@ ExperienceRouter.get("/:userId/pdfDownload", async (req, res, next) => {
 ExperienceRouter.get("/:userName/experiences/CSV", async (req, res, next) => {
   try {
     const allExperiences = await experienceModel.find();
-    //  const getExperienceSource = () => createReadStream(allExperiences);
 
     const fields = ["_id", "role", "company", "startDate", "endDate", "description", "area"];
     const options = { fields };
@@ -86,12 +85,24 @@ ExperienceRouter.get("/:userName/experiences/CSV", async (req, res, next) => {
 /****************GET EXPERIENCES OF PARTICULAR USER ******************/
 ExperienceRouter.get("/:userId/experiences", async (req, res, next) => {
   try {
-    const allExperiences = await profileModel.findById(req.params.userId, 
-      { experiences: 1 }
-      )
-      .populate("experiences");
+    const allExperiences = await profileModel.findById(req.params.userId, { experiences: 1 }).populate("experiences");
 
     res.send(allExperiences);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+/****************UPDATE EXPERIENCES******************/
+ExperienceRouter.put("/experiences/:expId", async (req, res, next) => {
+  try {
+    const updatedExp = await experienceModel.findByIdAndUpdate(req.params.expId, req.body, { runValidators: true, new: true });
+    if (updatedExp) {
+      res.send(updatedExp);
+    } else {
+      res.status(404).send("Not found");
+    }
   } catch (error) {
     console.log(error);
     next(error);
@@ -122,38 +133,32 @@ ExperienceRouter.get("/experiences", async (req, res, next) => {
 });
 
 /****************GET SPECIFIC EXPERIENCES******************/
-ExperienceRouter.get("/:userName/experiences/:expId", async (req, res, next) => {
+ExperienceRouter.get("/:userId/experiences/:expId", async (req, res, next) => {
   try {
-    const singleExp = await experienceModel.findById(req.params.expId);
-    if (singleExp) {
-      res.send(singleExp);
-    } else {
-      res.status(404).send(`Not found `);
-    }
+    const data = await profileModel.findById(req.params.userId, { experiences: 1 }).populate("experiences");
+
+    const userExperiences = data.experiences;
+    const Id = req.params.expId;
+    console.log(Id);
+
+    res.send(experience);
   } catch (error) {
     console.log(error);
     next(error);
   }
 });
 
-/****************UPDATE EXPERIENCES******************/
-ExperienceRouter.put("/:userName/experiences/:expId", async (req, res, next) => {
-  try {
-    const updatedExp = await experienceModel.findByIdAndUpdate(req.params.id, req.body, { runValidators: true, new: true });
-    res.send(updatedExp);
-  } catch (error) {
-    next(error);
-  }
-});
-
 /****************DELETE EXPERIENCE******************/
-ExperienceRouter.delete("/:userName/experiences/:expId", async (req, res, next) => {
+ExperienceRouter.delete("/experiences/:expId", async (req, res, next) => {
   try {
-    const deletedExp = await experienceModel.findByIdAndDelete(req.params.id);
+    const deletedExp = await experienceModel.findByIdAndDelete(req.params.expId);
     if (deletedExp) {
-      res.status(204).send();
+      res.status(204).send("deleted");
+    } else {
+      res.status(404).send("Not found");
     }
   } catch (error) {
+    console.log(error);
     next(error);
   }
 });
