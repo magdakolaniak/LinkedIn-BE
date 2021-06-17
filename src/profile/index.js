@@ -33,6 +33,17 @@ profileRouter.get('/:id', async (req, res, next) => {
     console.log(error);
   }
 });
+profileRouter.get('/:id/experiences', async (req, res, next) => {
+  try {
+    const profileId = req.params.id;
+    const profile = await ProfileModel.findById(profileId).populate(
+      'experiences'
+    );
+    res.send(profile);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 profileRouter.post('/', async (req, res, next) => {
   try {
