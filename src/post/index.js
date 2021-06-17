@@ -1,5 +1,6 @@
 import express from 'express';
 import postModel from './schema.js';
+import profileModel from '../profile/schema.js';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
@@ -59,6 +60,21 @@ postRouter.post(
     }
   }
 );
+postRouter.post('/:postId/addlike', async (req, res, next) => {
+  try {
+    const allProfiles = await profileModel.find({}, { name: 1, _id: 1 });
+    const onlyId = allProfiles.map((item) => item._id);
+    const randomId = onlyId[Math.floor(Math.random() * onlyId.length)];
+    console.log(randomId);
+    const postId = req.params.postId;
+    const singlePost = await postModel.findById(postId);
+    singlePost.likes.push(randomId);
+    const updatedPost = await singlePost.save();
+    res.send(updatedPost);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 postRouter.put('/:id', async (req, res, next) => {
   try {
