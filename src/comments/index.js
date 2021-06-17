@@ -1,6 +1,7 @@
 import express from "express";
 import commentsModel from "./schema.js";
 import postModel from "../post/schema.js";
+import ProfileModel from "../profile/schema.js";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
@@ -18,8 +19,17 @@ const cloudinaryStorage = new CloudinaryStorage({
 
 commentRouter.post("/:id/comment", async (req, res, next) => {
   try {
+    const profile = await ProfileModel.find({}).select("_id");
+
+    console.log(profile);
+    const random = profile[Math.floor(Math.random() * profile.length)];
+    const randomId = random._id;
+    console.log(randomId);
+
     const post = await postModel.findById(req.params.id);
-    const newComment = { ...req.body };
+
+    const newComment = { ...req.body, user: randomId };
+
     const comment = new commentsModel(newComment);
     const { _id } = await comment.save();
     post.comments.push(_id);
@@ -35,7 +45,7 @@ commentRouter.post("/:id/comment", async (req, res, next) => {
 
 commentRouter.get("/:id/comment", async (req, res, next) => {
   try {
-    const post = await postModel.findById(req.params.id, { comments: 1 }).populate("comments");
+    const post = await postModel.findById(req.params.id, { comments: 1 }).populate({ path: "comments", populate: { path: "user" } });
     res.send(post.comments);
   } catch (error) {
     next(error);
