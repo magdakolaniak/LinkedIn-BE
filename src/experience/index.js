@@ -20,7 +20,7 @@ const cloudinaryStorage = new CloudinaryStorage({
 const upload = multer({ storage: cloudinaryStorage }).single('image');
 
 ExperienceRouter.post(
-  '/:userName/experiences/:expId/picture',
+  '/experiences/:expId/picture',
   upload,
   async (req, res, next) => {
     try {
@@ -30,6 +30,7 @@ ExperienceRouter.post(
 
       res.send(req.file.path);
     } catch (error) {
+      console.log(error)
       next(error);
     }
   }
