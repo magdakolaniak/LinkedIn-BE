@@ -33,6 +33,15 @@ postRouter.get('/:id', async (req, res, next) => {
     console.log(error);
   }
 });
+postRouter.get('/:id/likes', async (req, res, next) => {
+  try {
+    const postId = req.params.id;
+    const post = await postModel.findById(postId).populate("likes");
+    res.send(post);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 postRouter.post('/', async (req, res, next) => {
   try {
