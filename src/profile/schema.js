@@ -14,9 +14,7 @@ const ProfileSchema = new Schema(
     experiences: [
       { type: Schema.Types.ObjectId, required: true, ref: 'Experience' },
     ],
-    posts: [
-      { type: Schema.Types.ObjectId, required: true, ref: 'Post' },
-    ],
+    
   },
   { timestamps: true }
 );
